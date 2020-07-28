@@ -1,0 +1,11 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: app-aws-loadbalancer
+subjects:
+- kind: ServiceAccount
+  name: app-aws-loadbalancer
+roleRef:
+  kind: Role
+  name: app-aws-loadbalancer
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,43 @@
+---
+# tasks file for awsloadbalancer
+
+- hosts: localhost
+  tasks:
+    - name: Get my current IP address
+      uri:
+        url: http://checkip.amazonaws.com/
+        return_content: yes
+      register: my_ip
+
+    - name: Create simple security group
+      ec2_group:
+        name: webservers
+        description: A security group for my current IP
+        region: us-west-1
+        rules:
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: "{{ my_ip.content | replace('\n', '') }}/32"
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: "{{ my_ip.content | replace('\n', '') }}/32"
+        rules_egress:
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0
+      register: webservers_group
+    - util.k8s_status:
+        api_version: awsloadbalancers.app.ansible.io/v1beta1
+        kind: AWSLoadbalancer
+        name: "{{ meta.name }}"
+        namespace: "{{ meta.namespace }}"
+        status:
+          conditions:
+            lastTransitionTime: 0
+            message: Running reconciliation
+            reason: Running
+            status: "True"
+            type: Running

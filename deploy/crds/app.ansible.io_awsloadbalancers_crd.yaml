@@ -1,0 +1,80 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: awsloadbalancers.app.ansible.io
+spec:
+  group: app.ansible.io
+  names:
+    kind: AWSLoadbalancer
+    listKind: AWSLoadbalancerList
+    plural: awsloadbalancers
+    singular: awsloadbalancer
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+    served: true
+    storage: true
+    subresources:
+      status: {}
+  validation:
+    openAPIV3Schema:
+      description: "Describes a shared Load Balancer for a given
+        application deployed in multiple clusters."
+      type: object
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: Spec represents a desired configuration for the agent on the
+            managed cluster.
+          type: object
+          properties:
+            domain:
+              description: "Provides the DNS domain name for the application."
+              type: string
+        status:
+          description: "Provides feedback on readiness of application load balancer"
+          type: object
+          properties:
+            conditions:
+              description: Conditions contains the different condition statuses for
+                this load balacner.
+              type: array
+              items:
+                description: StatusCondition provides details about load balancer readiness.
+                type: object
+                properties:
+                  lastTransitionTime:
+                    description: LastTransitionTime is the last time the condition
+                      changed from one status to another.
+                    type: string
+                    format: date-time
+                  message:
+                    description: Message is a human-readable message indicating details
+                      about the last status change.
+                    type: string
+                  reason:
+                    description: Reason is a (brief) reason for the condition's last
+                      status change.
+                    type: string
+                  status:
+                    description: Status is the status of the condition. One of True,
+                      False, Unknown.
+                    type: string
+                  type:
+                    description: Type is the type of the StatusCondition.
+                    type: string

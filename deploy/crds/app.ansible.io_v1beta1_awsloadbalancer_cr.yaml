@@ -1,0 +1,7 @@
+apiVersion: app.ansible.io/v1beta1
+kind: AWSLoadbalancer
+metadata:
+  name: example-awsloadbalancer
+spec:
+  # Add fields here
+  domain: wordpress.myapp.io
